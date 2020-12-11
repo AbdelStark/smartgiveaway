@@ -42,6 +42,25 @@ export class GiveAwayContractWrapper{
         });
     }
 
+
+    async getNextCommitPhaseStartBlock(){
+        return await this.giveaway.methods.getNextCommitPhaseStartBlock().call({
+            from: this.senderAddress,
+        });
+    }
+
+    async getNextRevealPhaseStartBlock(){
+        return await this.giveaway.methods.getNextRevealPhaseStartBlock().call({
+            from: this.senderAddress,
+        });
+    }
+
+    async participantsScores(index){
+        return await this.giveaway.methods.participantsScores(index).call({
+            from: this.senderAddress,
+        });
+    }
+
     participate(participantId, onTransactionHash, onReceipt, onError){
         this.giveaway.methods.participate(participantId).send({
             from: this.senderAddress,

@@ -9,6 +9,13 @@ As part of the Gitcoin Hackathon we are building a Giveaway platform (similar to
 
 This is a Proof Of Concept aiming to use `xDai` technology to build innovative features on top of an Ethereum smart contract solution.
 
+## Use case
+
+An operator can create give away with on-chain winner selection.
+In order to achieve that we are using the xDai on-chain RNG based on RANDAO.
+For the demonstration we target `RandomAuRaProxy` deployed at `0x5870b0527DeDB1cFBD9534343Feda1a41Ce47766`.
+
+
 ## Architecture
 
 We have 3 main components:

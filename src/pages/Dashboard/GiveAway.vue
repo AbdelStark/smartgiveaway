@@ -107,9 +107,35 @@
                       <font-awesome-icon icon="trash"/>
                     </base-button>
                   </div>
-                  <div class="col-md-1 pr-md-1 mt-4">
+                </div>
+                <div class="row">
+                  <div class="col-md-4 pr-md-1 mt-4">
                     <base-button class="btn-info" @click="getSeed(giveaway)">
                       Seed
+                    </base-button>
+                  </div>
+                  <div class="col-md-4 pr-md-1 mt-4">
+                    <base-button class="btn-info" @click="getNextCommitPhaseStartBlock(giveaway)">
+                      Commit start block
+                    </base-button>
+                  </div>
+                  <div class="col-md-4 pr-md-1 mt-4">
+                    <base-button class="btn-info" @click="getNextRevealPhaseStartBlock(giveaway)">
+                      Reveal start block
+                    </base-button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4 pr-md-1 mt-4">
+                    <base-input v-model="x"></base-input>
+                    <base-button class="btn-info" @click="getSeedModuloX(giveaway)">
+                      Seed mod x
+                    </base-button>
+                  </div>
+                  <div class="col-md-4 pr-md-1 mt-4">
+                    <base-input v-model="index"></base-input>
+                    <base-button class="btn-info" @click="participantsScores(giveaway)">
+                     Scores
                     </base-button>
                   </div>
                 </div>
@@ -172,8 +198,9 @@ export default {
       twitterHandle: '',
       currentModalId: null,
       loading: false,
-      random: 5,
       gaugeLoaded: false,
+      x: 0,
+      index: 0,
     }
   },
   computed: {
@@ -186,11 +213,11 @@ export default {
     await this.findAllGiveAway();
     setInterval(this.loadGauge, 1500);
     this.$nextTick(() => {
-       this.test();
-       this.loadGauge();
+      this.test();
+      this.loadGauge();
     });
   },
-  async created(){
+  async created() {
   },
   beforeDestroy() {
     clearInterval(this.polling);
@@ -216,8 +243,8 @@ export default {
       console.log(response);
       await this.findAllGiveAway();
     },
-    async loadGauge(){
-      if(!this.gaugeLoaded) {
+    async loadGauge() {
+      if (!this.gaugeLoaded) {
         console.log('loading gauge');
         console.log(this.giveaways);
         for (const giveaway of this.giveaways) {
@@ -274,10 +301,30 @@ export default {
           this.onError
       );
     },
-    async getSeed(giveaway){
+    async getSeed(giveaway) {
       const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
       const seed = await giveawayContract.getSeedForCurrentPhase();
       console.log('the seed is: ', seed);
+    },
+    async getSeedModuloX(giveaway) {
+      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+      const seed = await giveawayContract.getSeedModuloX(this.x);
+      console.log('the seed is: ', seed);
+    },
+    async participantsScores(giveaway) {
+      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+      const scores = await giveawayContract.participantsScores(this.index);
+      console.log(scores);
+    },
+    async getNextCommitPhaseStartBlock(giveaway) {
+      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+      const startBlock = await giveawayContract.getNextCommitPhaseStartBlock();
+      console.log('getNextCommitPhaseStartBlock: ', startBlock);
+    },
+    async getNextRevealPhaseStartBlock(giveaway) {
+      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+      const startBlock = await giveawayContract.getNextRevealPhaseStartBlock();
+      console.log('getNextRevealPhaseStartBlock: ', startBlock);
     },
     getContractWrapper(contractAddress) {
       return new GiveAwayContractWrapper(
