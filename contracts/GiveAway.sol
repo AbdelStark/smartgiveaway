@@ -5,6 +5,11 @@ pragma solidity >=0.6.0 <0.8.0;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 
+interface IPOSDAORandom {
+    function collectRoundLength() external view returns(uint256);
+    function currentSeed() external view returns(uint256);
+}
+
 contract GiveAway is Ownable, Pausable{
 
     uint public constant RETWEET_INDEX = 0;
@@ -28,8 +33,11 @@ contract GiveAway is Ownable, Pausable{
 
     address [] _listParticipants;
     mapping(address => Participant) public _participants;
+    mapping(uint256 => uint256) public participantsScores;
     string public _tweetLink;
-    uint public winnerIndex;
+    uint256 public winnerIndex;
+
+    IPOSDAORandom private _posdaoRandomContract; // address of RandomAuRa contract
 
     modifier onlyRegisteredUser()
     {
@@ -37,9 +45,10 @@ contract GiveAway is Ownable, Pausable{
         _;
     }
 
-
-    constructor (string memory name, string memory tweetLink, uint256 maxParticipants, uint256 scoreRetweet, uint256 scoreLike) public payable {
+    constructor (IPOSDAORandom randomContract, string memory name, string memory tweetLink, uint256 maxParticipants, uint256 scoreRetweet, uint256 scoreLike) public payable {
         require(msg.value>0);
+        require(randomContract != IPOSDAORandom(0));
+        _posdaoRandomContract = randomContract;
         _maxParticipants = maxParticipants;
         _name = name;
         _rules = Rules(scoreRetweet, scoreLike);
@@ -86,19 +95,23 @@ contract GiveAway is Ownable, Pausable{
         return _listParticipants.length;
     }
 
-    function close() public payable onlyOwner whenNotPaused{
-        if(numberOfParticipants()>0){
-            uint winnerFound;
-            uint scoreWinner = 0;
-            for (uint i = 0; i < _listParticipants.length; i++) {
-                uint currentScore = getScore(_listParticipants[i]);
-                if(currentScore > scoreWinner){
-                    winnerFound = i;
-                    scoreWinner = currentScore;
-                }
+    function close() public payable onlyOwner whenNotPaused {
+        uint256 seed = _posdaoRandomContract.currentSeed();
+        uint256 scoreWinner = 0;
+        for (uint i = 0; i < _listParticipants.length; i++) {
+            uint currentScore = getScore(_listParticipants[i]);
+            participantsScores[i] = currentScore;
+            if(currentScore >= scoreWinner){
+                scoreWinner = currentScore;
             }
-            winnerIndex = winnerFound;
         }
+        uint256[] storage winnersCandidates;
+        for (uint i = 0; i < _listParticipants.length; i++) {
+            if(participantsScores[i]==scoreWinner){
+                winnersCandidates.push(i);
+            }
+        }
+        winnerIndex = winnersCandidates[seed%winnersCandidates.length];
         _pause();
     }
 
@@ -106,9 +119,18 @@ contract GiveAway is Ownable, Pausable{
         require(numberOfParticipants()>0, "No found participant");
         return string(_participants[_listParticipants[winnerIndex]].id);
     }
-
     function getWinnerAddress() public view whenPaused returns(address){
         require(numberOfParticipants()>0, "No found participant");
         return _listParticipants[winnerIndex];
     }
+
+    function getSeedForCurrentPhase() public view returns (uint256){
+        return _posdaoRandomContract.currentSeed();
+    }
+
+    function getSeedModuloX(uint x) public view returns (uint256){
+        uint256 seed = _posdaoRandomContract.currentSeed();
+        return seed % x;
+    }
+
 }

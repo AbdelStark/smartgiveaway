@@ -60,6 +60,9 @@ router.push({path: '/'});
 
 function buildSettings() {
   return {
+    xdai: {
+      randomAuRaProxy: '0x5870b0527DeDB1cFBD9534343Feda1a41Ce47766',
+    },
     backend: {
       endpoint: 'https://smartgiveaway.herokuapp.com/',
     }

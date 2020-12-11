@@ -107,6 +107,11 @@
                       <font-awesome-icon icon="trash"/>
                     </base-button>
                   </div>
+                  <div class="col-md-1 pr-md-1 mt-4">
+                    <base-button class="btn-info" @click="getSeed(giveaway)">
+                      Seed
+                    </base-button>
+                  </div>
                 </div>
               </card>
             </div>
@@ -268,6 +273,11 @@ export default {
           this.onReceipt,
           this.onError
       );
+    },
+    async getSeed(giveaway){
+      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+      const seed = await giveawayContract.getSeedForCurrentPhase();
+      console.log('the seed is: ', seed);
     },
     getContractWrapper(contractAddress) {
       return new GiveAwayContractWrapper(

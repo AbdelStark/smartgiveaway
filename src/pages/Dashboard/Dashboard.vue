@@ -116,6 +116,7 @@ export default {
     ...mapState([
       'services',
       'cache',
+      'settings',
     ])
   },
   async created() {
@@ -129,9 +130,17 @@ export default {
     },
     async deployContract() {
       const giveAwayContract = new window.web3.eth.Contract(GiveAwayArtifacts.abi);
+      const randomAuRaProxy = this.settings.xdai.randomAuRaProxy;
+      console.log('random aura proxy address: ', randomAuRaProxy);
       giveAwayContract.deploy({
         data: GiveAwayArtifacts.bytecode,
-        arguments: [this.giveaway.name, this.giveaway.tweetLink, this.giveaway.maxParticipants, this.giveaway.retweetScore, this.giveaway.likeScore],
+        arguments: [
+          randomAuRaProxy,
+          this.giveaway.name,
+          this.giveaway.tweetLink,
+          this.giveaway.maxParticipants,
+          this.giveaway.retweetScore,
+          this.giveaway.likeScore],
       })
           .send({
             from: this.services.ethereum.selectedAddress,
