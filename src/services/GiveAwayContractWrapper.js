@@ -24,6 +24,12 @@ export class GiveAwayContractWrapper{
         });
     }
 
+    async numberOfParticipants(){
+        return await this.giveaway.methods.numberOfParticipants().call({
+            from: this.senderAddress,
+        });
+    }
+
     participate(participantId, onTransactionHash, onReceipt, onError){
         this.giveaway.methods.participate(participantId).send({
             from: this.senderAddress,

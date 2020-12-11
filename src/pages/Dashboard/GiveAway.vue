@@ -59,49 +59,18 @@
                       </div>
                     </div>
                   </div>
-                  <!--div class="col-md-4 pr-md-1">
-                    <div class="row">
-                      <div class="col-md-3 pr-md-1 mt-4">
-                        <base-button class="ml-2" icon @click="participateGiveAway(giveaway)">
-                          <font-awesome-icon icon="plus"/>
-                        </base-button>
-                      </div>
-                      <div class="col-md-3 pr-md-1 mt-4">
-                        <base-button icon @click="closeGiveAway(giveaway)">
-                          <font-awesome-icon icon="clock"/>
-                        </base-button>
-                      </div>
-                      <div class="col-md-3 pr-md-1 mt-4">
-                        <base-button icon @click="removeGiveAway(giveaway)">
-                          <font-awesome-icon icon="trash"/>
-                        </base-button>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-3 pr-md-1 mt-4">
-                        <base-button class="ml-2" icon @click="likeGiveaway(giveaway)">
-                          <font-awesome-icon icon="heart"/>
-                        </base-button>
-                      </div>
-                      <div class="col-md-3 pr-md-1 mt-4">
-                        <base-button icon @click="retweetGiveaway(giveaway)">
-                          <i class="fab fa-twitter"></i>
-                        </base-button>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-3 pr-md-1 mt-4">
-                        <base-button class="ml-2" icon @click="winner(giveaway)">
-                          <font-awesome-icon icon="trophy"/>
-                        </base-button>
-                      </div>
-                      <div class="col-md-3 pr-md-1 mt-4">
-                        <base-button icon @click="">
-                          <font-awesome-icon icon="gift"/>
-                        </base-button>
-                      </div>
-                    </div>
-                  </div-->
+                  <div class="col-md-2 pr-md-1">
+                    <VueSvgGauge
+                        :start-angle="-110"
+                        :end-angle="110"
+                        :value="giveaway.numberOfParticipants"
+                        :separator-step="1"
+                        :min="0"
+                        :max="giveaway.maxParticipants"
+                        :gauge-color="[{ offset: 0, color: '#347AB0'}, { offset: 100, color: '#8CDFAD'}]"
+                        :scale-interval="0.1"
+                    />
+                  </div>
                 </div>
 
                 <div class="row">
@@ -208,9 +177,25 @@ export default {
   },
   async mounted() {
     await this.findAllGiveAway();
+    for (const giveaway of this.giveaways) {
+      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+      const n = await giveawayContract.numberOfParticipants();
+      console.log('number of participants: ', n);
+      console.log('max participants: ', giveaway.maxParticipants);
+      giveaway.numberOfParticipants = n;
+    }
     this.$nextTick(() => {
-      this.test();
+       this.test();
     });
+  },
+  async created(){
+    /*for (const giveaway of this.giveaways) {
+      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+      const n = await giveawayContract.numberOfParticipants();
+      console.log('number of participants: ', n);
+      console.log('max participants: ', giveaway.maxParticipants);
+      giveaway.numberOfParticipants = n;
+    }*/
   },
   beforeDestroy() {
     clearInterval(this.polling);
@@ -228,6 +213,13 @@ export default {
         if (Array.isArray(response.data) && response.data.length > 0) {
           this.giveaways = response.data;
           this.currentFindAllResponse = JSON.stringify(response);
+          /*for (const giveaway of this.giveaways) {
+            const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+            const n = await giveawayContract.numberOfParticipants();
+            console.log('number of participants: ', n);
+            console.log('max participants: ', giveaway.maxParticipants);
+            giveaway.numberOfParticipants = n;
+          }*/
         }
       }
     },
@@ -237,12 +229,20 @@ export default {
       await this.findAllGiveAway();
     },
     async closeGiveAway(giveaway) {
+      for (const giveaway of this.giveaways) {
+        const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+        const n = await giveawayContract.numberOfParticipants();
+        console.log('number of participants: ', n);
+        console.log('max participants: ', giveaway.maxParticipants);
+        giveaway.numberOfParticipants = n;
+      }
+      /*
       const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
       giveawayContract.close(
           this.onTransactionHash,
           this.onGiveAwayClosed,
           this.onError
-      );
+      );*/
     },
     async winner(giveaway) {
       const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
@@ -320,12 +320,10 @@ export default {
         this.$bvModal.hide(this.currentModalId);
       }
     },
-    test() {
-      this.giveaways.forEach(
-          giveaway => {
-            this.displayTweet(giveaway.giveawayId, this.tweetIdFromUrl(giveaway.tweetLink));
-          }
-      );
+    async test() {
+      for (const giveaway of this.giveaways) {
+        this.displayTweet(giveaway.giveawayId, this.tweetIdFromUrl(giveaway.tweetLink));
+      }
     },
     displayTweet(giveawayId, id) {
       const twContainer = document.getElementById(this.tweetDivId(giveawayId));

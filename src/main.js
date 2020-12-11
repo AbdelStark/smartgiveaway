@@ -17,6 +17,7 @@ import './plugins/font-awesome';
 import './plugins/clipboard';
 import Vuex from "vuex";
 import VueRouter from "vue-router";
+import VueSvgGauge from 'vue-svg-gauge'
 import RouterPrefetch from 'vue-router-prefetch';
 import App from "./App";
 import router from "./router/index";
@@ -27,6 +28,7 @@ import './registerServiceWorker';
 import Web3 from "web3";
 import {BackendClient} from "@/services/BackendClient";
 
+Vue.use(VueSvgGauge);
 Vue.use(BlackDashboard);
 Vue.use(VueRouter);
 Vue.use(RouterPrefetch);
