@@ -167,6 +167,8 @@ export default {
       twitterHandle: '',
       currentModalId: null,
       loading: false,
+      random: 5,
+      gaugeLoaded: false,
     }
   },
   computed: {
@@ -177,25 +179,13 @@ export default {
   },
   async mounted() {
     await this.findAllGiveAway();
-    for (const giveaway of this.giveaways) {
-      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
-      const n = await giveawayContract.numberOfParticipants();
-      console.log('number of participants: ', n);
-      console.log('max participants: ', giveaway.maxParticipants);
-      giveaway.numberOfParticipants = n;
-    }
+    setInterval(this.loadGauge, 1500);
     this.$nextTick(() => {
        this.test();
+       this.loadGauge();
     });
   },
   async created(){
-    /*for (const giveaway of this.giveaways) {
-      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
-      const n = await giveawayContract.numberOfParticipants();
-      console.log('number of participants: ', n);
-      console.log('max participants: ', giveaway.maxParticipants);
-      giveaway.numberOfParticipants = n;
-    }*/
   },
   beforeDestroy() {
     clearInterval(this.polling);
@@ -213,13 +203,6 @@ export default {
         if (Array.isArray(response.data) && response.data.length > 0) {
           this.giveaways = response.data;
           this.currentFindAllResponse = JSON.stringify(response);
-          /*for (const giveaway of this.giveaways) {
-            const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
-            const n = await giveawayContract.numberOfParticipants();
-            console.log('number of participants: ', n);
-            console.log('max participants: ', giveaway.maxParticipants);
-            giveaway.numberOfParticipants = n;
-          }*/
         }
       }
     },
@@ -228,21 +211,28 @@ export default {
       console.log(response);
       await this.findAllGiveAway();
     },
-    async closeGiveAway(giveaway) {
-      for (const giveaway of this.giveaways) {
-        const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
-        const n = await giveawayContract.numberOfParticipants();
-        console.log('number of participants: ', n);
-        console.log('max participants: ', giveaway.maxParticipants);
-        giveaway.numberOfParticipants = n;
+    async loadGauge(){
+      if(!this.gaugeLoaded) {
+        console.log('loading gauge');
+        console.log(this.giveaways);
+        for (const giveaway of this.giveaways) {
+          const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+          const n = await giveawayContract.numberOfParticipants();
+          console.log('number of participants: ', n);
+          console.log('max participants: ', giveaway.maxParticipants);
+          giveaway.numberOfParticipants = parseInt(n);
+        }
+        this.$forceUpdate();
+        this.gaugeLoaded = true;
       }
-      /*
+    },
+    async closeGiveAway(giveaway) {
       const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
       giveawayContract.close(
           this.onTransactionHash,
           this.onGiveAwayClosed,
           this.onError
-      );*/
+      );
     },
     async winner(giveaway) {
       const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
@@ -304,6 +294,7 @@ export default {
       this.$notifyMessage('success', 'Receipt received.');
       this.loading = false;
       this.hideModal();
+      this.gaugeLoaded = false;
     },
     onError(error) {
       console.error(error);
