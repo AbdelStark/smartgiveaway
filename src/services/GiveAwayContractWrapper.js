@@ -12,6 +12,18 @@ export class GiveAwayContractWrapper{
         });
     }
 
+    async getWinnerId(){
+        return await this.giveaway.methods.getWinnerId().call({
+            from: this.senderAddress,
+        });
+    }
+
+    async getWinnerAddress(){
+        return await this.giveaway.methods.getWinnerAddress().call({
+            from: this.senderAddress,
+        });
+    }
+
     participate(participantId, onTransactionHash, onReceipt, onError){
         this.giveaway.methods.participate(participantId).send({
             from: this.senderAddress,
@@ -32,6 +44,15 @@ export class GiveAwayContractWrapper{
 
     retweet(onTransactionHash, onReceipt, onError){
         this.giveaway.methods.retweet().send({
+            from: this.senderAddress,
+        })
+            .on('transactionHash', onTransactionHash)
+            .on('receipt', onReceipt)
+            .on('error', onError);
+    }
+
+    close(onTransactionHash, onReceipt, onError){
+        this.giveaway.methods.close().send({
             from: this.senderAddress,
         })
             .on('transactionHash', onTransactionHash)

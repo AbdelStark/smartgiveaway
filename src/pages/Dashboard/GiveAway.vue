@@ -59,11 +59,16 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-4 pr-md-1">
+                  <!--div class="col-md-4 pr-md-1">
                     <div class="row">
                       <div class="col-md-3 pr-md-1 mt-4">
                         <base-button class="ml-2" icon @click="participateGiveAway(giveaway)">
                           <font-awesome-icon icon="plus"/>
+                        </base-button>
+                      </div>
+                      <div class="col-md-3 pr-md-1 mt-4">
+                        <base-button icon @click="closeGiveAway(giveaway)">
+                          <font-awesome-icon icon="clock"/>
                         </base-button>
                       </div>
                       <div class="col-md-3 pr-md-1 mt-4">
@@ -84,7 +89,54 @@
                         </base-button>
                       </div>
                     </div>
+                    <div class="row">
+                      <div class="col-md-3 pr-md-1 mt-4">
+                        <base-button class="ml-2" icon @click="winner(giveaway)">
+                          <font-awesome-icon icon="trophy"/>
+                        </base-button>
+                      </div>
+                      <div class="col-md-3 pr-md-1 mt-4">
+                        <base-button icon @click="">
+                          <font-awesome-icon icon="gift"/>
+                        </base-button>
+                      </div>
+                    </div>
+                  </div-->
+                </div>
 
+                <div class="row">
+                  <div class="col-md-2 pr-md-1 mt-4 ml-2">
+                    <base-button @click="participateGiveAway(giveaway)">
+                      Participate
+                      <font-awesome-icon icon="plus"/>
+                    </base-button>
+                  </div>
+                  <div class="col-md-1 pr-md-1 mt-4">
+                    <base-button @click="likeGiveaway(giveaway)">
+                      <font-awesome-icon icon="heart"/>
+                    </base-button>
+                  </div>
+                  <div class="col-md-1 pr-md-1 mt-4">
+                    <base-button @click="retweetGiveaway(giveaway)">
+                      <i class="fab fa-twitter"></i>
+                    </base-button>
+                  </div>
+                  <div class="col-md-2 pr-md-1 mt-4">
+                    <base-button @click="winner(giveaway)">
+                      Winner
+                      <font-awesome-icon icon="trophy"/>
+                    </base-button>
+                  </div>
+                  <div class="col-md-2 pr-md-1 mt-4">
+                    <base-button @click="closeGiveAway(giveaway)">
+                      Close
+                      <font-awesome-icon icon="clock"/>
+                    </base-button>
+                  </div>
+                  <div class="col-md-1 pr-md-1 mt-4">
+                    <base-button class="btn-danger" @click="removeGiveAway(giveaway)">
+                      <font-awesome-icon icon="trash"/>
+                    </base-button>
                   </div>
                 </div>
               </card>
@@ -184,6 +236,23 @@ export default {
       console.log(response);
       await this.findAllGiveAway();
     },
+    async closeGiveAway(giveaway) {
+      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+      giveawayContract.close(
+          this.onTransactionHash,
+          this.onGiveAwayClosed,
+          this.onError
+      );
+    },
+    async winner(giveaway) {
+      const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
+      const winner = await giveawayContract.getWinnerId();
+      console.log('the winner is: ', winner);
+      this.$notifyMessage('success', 'Winner: ' + winner);
+    },
+    async onGiveAwayClosed(receipt) {
+      this.$notifyMessage('success', 'Give Away is now closed.');
+    },
     async participateGiveAway(giveaway) {
       console.log('checking if user is already participating.');
       this.selectedGiveAway = giveaway;
@@ -194,7 +263,7 @@ export default {
         this.showModal('modal-confirm-participation');
       }
     },
-    async likeGiveaway(giveaway){
+    async likeGiveaway(giveaway) {
       const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
       giveawayContract.like(
           this.onTransactionHash,
@@ -202,7 +271,7 @@ export default {
           this.onError
       );
     },
-    async retweetGiveaway(giveaway){
+    async retweetGiveaway(giveaway) {
       const giveawayContract = this.getContractWrapper(giveaway.giveawayId);
       giveawayContract.retweet(
           this.onTransactionHash,
