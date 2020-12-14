@@ -12,9 +12,11 @@ This is a Proof Of Concept aiming to use `xDai` technology to build innovative f
 ## Use case
 
 An operator can create give away with on-chain winner selection.
-In order to achieve that we are using the xDai on-chain RNG based on RANDAO.
+In order to achieve that we are using the xDai on-chain RNG based on `RANDAO`.
 For the demonstration we target `RandomAuRaProxy` deployed at `0x5870b0527DeDB1cFBD9534343Feda1a41Ce47766`.
 
+The `GiveAway` contract uses `IPOSDAORandom` to select the winner among the candidates.
+A seed is retrieved with `currentSeed` method, allowing us to have a verifiable random number generated on chain.
 
 ## Architecture
 
