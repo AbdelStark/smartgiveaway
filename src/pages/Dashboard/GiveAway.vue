@@ -108,37 +108,6 @@
                     </base-button>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-4 pr-md-1 mt-4">
-                    <base-button class="btn-info" @click="getSeed(giveaway)">
-                      Seed
-                    </base-button>
-                  </div>
-                  <div class="col-md-4 pr-md-1 mt-4">
-                    <base-button class="btn-info" @click="getNextCommitPhaseStartBlock(giveaway)">
-                      Commit start block
-                    </base-button>
-                  </div>
-                  <div class="col-md-4 pr-md-1 mt-4">
-                    <base-button class="btn-info" @click="getNextRevealPhaseStartBlock(giveaway)">
-                      Reveal start block
-                    </base-button>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-4 pr-md-1 mt-4">
-                    <base-input v-model="x"></base-input>
-                    <base-button class="btn-info" @click="getSeedModuloX(giveaway)">
-                      Seed mod x
-                    </base-button>
-                  </div>
-                  <div class="col-md-4 pr-md-1 mt-4">
-                    <base-input v-model="index"></base-input>
-                    <base-button class="btn-info" @click="participantsScores(giveaway)">
-                     Scores
-                    </base-button>
-                  </div>
-                </div>
               </card>
             </div>
           </div>

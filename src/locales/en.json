@@ -4,6 +4,7 @@
   "sidebar": {
     "title": "SmartGiveAway",
     "dashboard": "Dashboard",
-    "giveaway": "Give Away"
+    "giveaway": "Give Away",
+    "random": "Random Aura"
   }
 }
