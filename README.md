@@ -5,6 +5,10 @@
 # Smart Giveaway
 [Build On XDai: Applications & Bridges GR8 Hackathon](https://gitcoin.co/issue/xdaichain/site/9/100024347)
 
+[![hackathon](https://img.youtube.com/vi/waZJNSGPKzE/0.jpg)](https://www.youtube.com/watch?v=waZJNSGPKzE)
+
+[Online Demo](http://smartgiveaway.surge.sh/)
+
 As part of the Gitcoin Hackathon we are building a Giveaway platform (similar to twitter giveaways).
 
 This is a Proof Of Concept aiming to use `xDai` technology to build innovative features on top of an Ethereum smart contract solution.
