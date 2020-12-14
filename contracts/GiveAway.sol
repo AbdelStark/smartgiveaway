@@ -27,7 +27,10 @@ contract GiveAway is Ownable, Pausable{
     mapping(address => Participant) public _participants;
     mapping(uint256 => uint256) public participantsScores;
     string public _tweetLink;
+
+    uint256[] public winnersCandidates;
     uint256 public winnerIndex;
+
     IPOSDAORandom private _posdaoRandomContract; // address of RandomAuRa contract
     modifier onlyRegisteredUser()
     {
@@ -79,17 +82,17 @@ contract GiveAway is Ownable, Pausable{
         for (uint i = 0; i < _listParticipants.length; i++) {
             uint currentScore = getScore(_listParticipants[i]);
             participantsScores[i] = currentScore;
-            if(currentScore >= scoreWinner){
+            if(currentScore > scoreWinner){
                 scoreWinner = currentScore;
             }
         }
-        uint256[] storage winnersCandidates;
         for (uint i = 0; i < _listParticipants.length; i++) {
             if(participantsScores[i]==scoreWinner){
                 winnersCandidates.push(i);
             }
         }
         winnerIndex = winnersCandidates[seed%winnersCandidates.length];
+
         _pause();
     }
     function getWinnerId() public view whenPaused returns(string memory){
