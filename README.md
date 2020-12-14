@@ -7,6 +7,9 @@
 
 [![hackathon](https://img.youtube.com/vi/waZJNSGPKzE/0.jpg)](https://www.youtube.com/watch?v=waZJNSGPKzE)
 
+## Online Demo
+Try it on your own! (Need xDai on mainnet)
+
 [Online Demo](http://smartgiveaway.surge.sh/)
 
 As part of the Gitcoin Hackathon we are building a Giveaway platform (similar to twitter giveaways).
